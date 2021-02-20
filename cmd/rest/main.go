@@ -11,17 +11,23 @@ import (
 	"go-service-gin/interfaces/rest"
 	"go-service-gin/util/logger"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	// load environment variable
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* load environment variable
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	if err := godotenv.Load(); err != nil {
 		logger.LogError(err)
 	}
 
-	// define configuration
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* define configuration
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	var (
 		appConfig    = config.NewAppConfig()
 		dbConfig     = config.NewDatabaseConfig()
@@ -29,20 +35,26 @@ func main() {
 		sentryConfig = config.NewSentryConfig()
 	)
 
-	// define database connection
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* define database connection
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	db, err := database.NewDatabase(dbConfig)
 	if err != nil {
 		logger.LogError(err)
 	}
 
-	// define library
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* define library
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	redis := redis.New(redisConfig)
 	sentry := sentry.New(sentryConfig)
 
 	logger.LogInfo(redis)
 	logger.LogInfo(sentry)
 
-	// define variable and inject to constructor
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* define variable and inject to constructor
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	var (
 		// home
 		homeHandler = rest.NewHomeREST()
@@ -53,16 +65,31 @@ func main() {
 		blogHandler    = rest.NewBlogREST(blogLogic)
 	)
 
-	// define engine instance from gin framework
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* define engine instance from gin framework
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	engine := gin.Default()
+	if appConfig.Env == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
-	// define router
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* define gin middleware
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	engine.Use(gzip.Gzip(gzip.DefaultCompression))
+	engine.Use(cors.Default())
+
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* define routes
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	engine.GET("/", homeHandler.Home)
+	br := engine.Group("/blogs")
+	{
+		br.GET("", blogHandler.Fetch)
+	}
 
-	// router /blogs
-	blogRouter := engine.Group("/blogs")
-	blogRouter.GET("", blogHandler.Fetch)
-
-	// running server using engine instance from gin framework
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* running server using engine instance from gin framework
+	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	engine.Run(fmt.Sprintf("%s:%s", appConfig.Host, appConfig.Port))
 }
