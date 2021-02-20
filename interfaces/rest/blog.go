@@ -2,6 +2,7 @@ package rest
 
 import (
 	"go-service-gin/application"
+	"go-service-gin/util/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,21 +15,26 @@ type BlogREST struct {
 
 // NewBlogREST is
 func NewBlogREST(ba *application.BlogApplication) *BlogREST {
+	if ba == nil {
+		return nil
+	}
+
 	return &BlogREST{ba}
 }
 
 // Fetch is
 func (bh *BlogREST) Fetch(c *gin.Context) {
-	// costum context
-
 	// bind
 
 	// validation
 
 	// logic
+	result, err := bh.blogLogic.Fetch()
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
 
 	// response
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
+	response.Success(c, http.StatusOK, "success", result)
 }
