@@ -31,7 +31,7 @@ func (br *blogRepository) Fetch() ([]blogs.Blog, error) {
 }
 
 func (br *blogRepository) Create(b *blogs.Blog) error {
-	if err := br.db.Find(b).Error; err != nil {
+	if err := br.db.Create(b).Error; err != nil {
 		return err
 	}
 
