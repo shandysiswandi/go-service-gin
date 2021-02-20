@@ -20,3 +20,8 @@ func NewBlogApplication(br blogs.BlogRepository) *BlogApplication {
 func (ba *BlogApplication) Fetch() ([]blogs.Blog, error) {
 	return ba.blogRepository.Fetch()
 }
+
+// Create is
+func (ba *BlogApplication) Create(b *blogs.Blog) error {
+	return ba.blogRepository.Create(b)
+}
