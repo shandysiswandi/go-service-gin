@@ -10,6 +10,7 @@ import (
 	"go-service-gin/infrastructure/library/sentry"
 	"go-service-gin/interfaces/rest"
 	"go-service-gin/util/logger"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
@@ -56,8 +57,8 @@ func main() {
 	/* define variable and inject to constructor
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	var (
-		// home
-		homeHandler = rest.NewHomeREST()
+		// default
+		defaultHandler = rest.NewDefaultREST()
 
 		// blogs
 		blogRepository = mysql.NewBlogRepository(db)
@@ -77,15 +78,38 @@ func main() {
 	/* define gin middleware
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
-	engine.Use(cors.Default())
+	engine.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           2 * time.Hour,
+	}))
+	engine.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("X-Content-Type-Options", "nosniff")
+		c.Writer.Header().Set("X-DNS-Prefetch-Control", "off")
+		c.Writer.Header().Set("X-Frame-Options", "DENY")
+		c.Writer.Header().Set("Strict-Transport-Security", "true; includeSubDomains")
+		c.Writer.Header().Set("X-Download-Options", "noopen")
+		c.Writer.Header().Set("X-XSS-Protection", "1; mode=block")
+		c.Writer.Header().Set("Referrer-Policy", "no-referrer")
+	})
 
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	/* define routes
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	engine.GET("/", homeHandler.Home)
+	engine.StaticFile("/favicon.ico", "./resource/media/favicon.ico")
+	engine.NoRoute(defaultHandler.RouteNotFound)
+	engine.HandleMethodNotAllowed = true
+	engine.NoMethod(defaultHandler.MethodNotFound)
+	engine.GET("/", defaultHandler.Home)
+
 	br := engine.Group("/blogs")
 	{
-		br.GET("", blogHandler.Fetch)
+		if blogHandler != nil {
+			br.GET("", blogHandler.Fetch)
+		}
 	}
 
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
