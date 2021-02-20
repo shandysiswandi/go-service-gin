@@ -29,3 +29,11 @@ func (br *blogRepository) Fetch() ([]blogs.Blog, error) {
 
 	return model, nil
 }
+
+func (br *blogRepository) Create(b *blogs.Blog) error {
+	if err := br.db.Find(b).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
