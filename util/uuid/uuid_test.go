@@ -25,3 +25,22 @@ func TestIsUUID(t *testing.T) {
 		is.Equal(tc.expected, uuid.IsUUID(tc.input))
 	}
 }
+
+func TestGenerate(t *testing.T) {
+	is := assert.New(t)
+
+	cases := []struct {
+		input    string
+		expected bool
+	}{
+		{uuid.Generate(), true},
+		{uuid.Generate(), true},
+		{uuid.Generate(), true},
+		{uuid.Generate(), true},
+		{uuid.Generate(), true},
+	}
+
+	for _, tc := range cases {
+		is.Equal(tc.expected, uuid.IsUUID(tc.input))
+	}
+}
