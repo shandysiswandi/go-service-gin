@@ -23,7 +23,7 @@ func NewBlogRepository(db *database.Database) blogs.BlogRepository {
 func (br *blogRepository) Fetch() ([]blogs.Blog, error) {
 	model := []blogs.Blog{}
 
-	if err := br.db.Find(&model).Error; err != nil {
+	if err := br.db.Where("deleted_at IS NULL").Find(&model).Error; err != nil {
 		return nil, err
 	}
 
