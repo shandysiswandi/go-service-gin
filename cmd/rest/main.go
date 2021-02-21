@@ -51,14 +51,13 @@ func main() {
 	sentry := sentry.New(sentryConfig)
 
 	logger.LogInfo(redis)
-	logger.LogInfo(sentry)
 
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	/* define variable and inject to constructor
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	var (
 		// default
-		defaultHandler = rest.NewDefaultREST()
+		defaultHandler = rest.NewDefaultREST(sentry)
 
 		// blogs
 		blogRepository = mysql.NewBlogRepository(db)
@@ -104,6 +103,7 @@ func main() {
 	engine.HandleMethodNotAllowed = true
 	engine.NoMethod(defaultHandler.MethodNotFound)
 	engine.GET("/", defaultHandler.Home)
+	engine.GET("/check/sentry", defaultHandler.Sentry)
 
 	br := engine.Group("/blogs")
 	{
