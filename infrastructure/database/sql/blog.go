@@ -1,4 +1,4 @@
-package mysql
+package sql
 
 import (
 	"go-service-gin/domain/blogs"
