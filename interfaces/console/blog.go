@@ -31,7 +31,7 @@ func (bh *BlogConsole) Create() bool {
 	}
 
 	if err := bh.blogLogic.Create(b); err != nil {
-		logger.LogInfo(err)
+		logger.Info(err)
 		return false
 	}
 
