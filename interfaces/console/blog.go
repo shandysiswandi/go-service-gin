@@ -24,7 +24,7 @@ func NewBlogConsole(ba *application.BlogApplication) *BlogConsole {
 
 // Create is
 func (bh *BlogConsole) Create() bool {
-	b := &blogs.Blog{
+	b := &blogs.CreateBlog{
 		ID:    uuid.Generate(),
 		Title: faker.Sentence(),
 		Body:  faker.Paragraph(),
