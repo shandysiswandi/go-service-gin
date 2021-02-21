@@ -12,6 +12,9 @@ type Blog struct {
 	DeletedAt *time.Time `json:"deleted_at" bson:"deleted_at"`
 }
 
+// Blogs is
+type Blogs []Blog
+
 // TableName is
 func (Blog) TableName() string {
 	return "blogs"
