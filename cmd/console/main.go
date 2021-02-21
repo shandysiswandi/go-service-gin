@@ -20,7 +20,7 @@ func main() {
 	/* load environment variable
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	if err := godotenv.Load(); err != nil {
-		logger.LogError(err)
+		logger.Error(err)
 	}
 
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
@@ -35,7 +35,7 @@ func main() {
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	db, err := database.NewDatabase(dbConfig)
 	if err != nil {
-		logger.LogError(err)
+		logger.Error(err)
 	}
 
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
@@ -52,5 +52,5 @@ func main() {
 	for i := 1; i <= 5; i++ {
 		blogConsole.Create()
 	}
-	logger.LogInfo(time.Since(t))
+	logger.Info(time.Since(t))
 }
