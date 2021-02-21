@@ -21,17 +21,17 @@ func NewBlogRepository(db *database.Database) blogs.BlogRepository {
 }
 
 func (br *blogRepository) Fetch() (blogs.Blogs, error) {
-	model := blogs.Blogs{}
+	result := blogs.Blogs{}
 
-	if err := br.db.Where("deleted_at IS NULL").Find(&model).Error; err != nil {
+	if err := br.db.Table(blogs.Blog{}.TableName()).Where("deleted_at IS NULL").Find(&result).Error; err != nil {
 		return nil, err
 	}
 
-	return model, nil
+	return result, nil
 }
 
-func (br *blogRepository) Create(b *blogs.Blog) error {
-	if err := br.db.Create(b).Error; err != nil {
+func (br *blogRepository) Create(b *blogs.CreateBlog) error {
+	if err := br.db.Table(blogs.Blog{}.TableName()).Create(b).Error; err != nil {
 		return err
 	}
 
