@@ -7,10 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLogInfo(t *testing.T) {
-	assert.Nil(t, logger.LogInfo("info"))
+func TestInfo(t *testing.T) {
+	assert.Nil(t, logger.Info("info"))
 }
 
-func TestLogError(t *testing.T) {
-	assert.Nil(t, logger.LogError("error"))
+func TestError(t *testing.T) {
+	assert.Nil(t, logger.Error("error"))
 }

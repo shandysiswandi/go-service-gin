@@ -4,14 +4,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// LogInfo is
-func LogInfo(args ...interface{}) error {
+// Info is
+func Info(args ...interface{}) error {
 	log.Info(args...)
 	return nil
 }
 
-// LogError is
-func LogError(args ...interface{}) error {
+// Error is
+func Error(args ...interface{}) error {
 	log.Error(args...)
 	return nil
 }
