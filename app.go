@@ -4,7 +4,7 @@ import (
 	"go-service-gin/application"
 	"go-service-gin/config"
 	"go-service-gin/infrastructure/database"
-	"go-service-gin/infrastructure/database/mysql"
+	"go-service-gin/infrastructure/database/sql"
 	"go-service-gin/infrastructure/library/redis"
 	"go-service-gin/infrastructure/library/sentry"
 	"go-service-gin/util/logger"
@@ -58,7 +58,7 @@ func New() map[int]interface{} {
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	var (
 		// blogs
-		blogRepository = mysql.NewBlogRepository(db)
+		blogRepository = sql.NewBlogRepository(db)
 		blogLogic      = application.NewBlogApplication(blogRepository)
 	)
 
