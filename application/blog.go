@@ -17,11 +17,11 @@ func NewBlogApplication(br blogs.BlogRepository) *BlogApplication {
 }
 
 // Fetch is
-func (ba *BlogApplication) Fetch() ([]blogs.Blog, error) {
+func (ba *BlogApplication) Fetch() (blogs.Blogs, error) {
 	return ba.blogRepository.Fetch()
 }
 
 // Create is
-func (ba *BlogApplication) Create(b *blogs.Blog) error {
+func (ba *BlogApplication) Create(b *blogs.CreateBlog) error {
 	return ba.blogRepository.Create(b)
 }
