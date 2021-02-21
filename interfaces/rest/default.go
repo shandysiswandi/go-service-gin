@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"go-service-gin/infrastructure/library/sentry"
 	"go-service-gin/util/response"
 	"net/http"
 
@@ -8,16 +9,24 @@ import (
 )
 
 // DefaultREST is
-type DefaultREST struct{}
+type DefaultREST struct {
+	sentry *sentry.Sentry
+}
 
 // NewDefaultREST is
-func NewDefaultREST() *DefaultREST {
-	return &DefaultREST{}
+func NewDefaultREST(s *sentry.Sentry) *DefaultREST {
+	return &DefaultREST{s}
 }
 
 // Home is
 func (DefaultREST) Home(c *gin.Context) {
 	response.Success(c, http.StatusOK, "welcome to home", []string{})
+}
+
+// Sentry is
+func (d *DefaultREST) Sentry(c *gin.Context) {
+	e := d.sentry.Message("sentry check")
+	response.Success(c, http.StatusOK, "sentry check | if data null, sentry not connect", e)
 }
 
 // RouteNotFound is
