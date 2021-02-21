@@ -1,50 +1,23 @@
 package main
 
 import (
+	app "go-service-gin"
 	"go-service-gin/application"
-	"go-service-gin/config"
-	"go-service-gin/infrastructure/database"
-	"go-service-gin/infrastructure/database/mysql"
 	"go-service-gin/interfaces/console"
 	"go-service-gin/util/logger"
 	"sync"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 var wg = sync.WaitGroup{}
 
 func main() {
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* load environment variable
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	if err := godotenv.Load(); err != nil {
-		logger.Error(err)
-	}
-
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* define configuration
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+	/* load app data and typed and define variable hanlder and inject data to constructor */
 	var (
-		dbConfig = config.NewDatabaseConfig()
-	)
+		appData   = app.New()
+		blogLogic = appData[app.BlogLogic].(*application.BlogApplication)
 
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* define database connection
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	db, err := database.NewDatabase(dbConfig)
-	if err != nil {
-		logger.Error(err)
-	}
-
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* define variable and inject to constructor
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	var (
-		blogRepository = mysql.NewBlogRepository(db)
-		blogLogic      = application.NewBlogApplication(blogRepository)
-		blogConsole    = console.NewBlogConsole(blogLogic)
+		blogConsole = console.NewBlogConsole(blogLogic)
 	)
 
 	// testing. stress test
