@@ -78,18 +78,14 @@ func NewDatabase(dc *config.DatabaseConfig) (*Database, error) {
 
 func gormConnection(dsn, driver string) (db *gorm.DB, err error) {
 	var dialect gorm.Dialector
-	var gormConfig *gorm.Config
-	var logDB = logger.Default.LogMode(logger.Silent)
 
 	if driver == "postgres" {
-		gormConfig = &gorm.Config{Logger: logDB}
 		dialect = postgres.Open(dsn)
 	} else {
-		gormConfig = &gorm.Config{PrepareStmt: true, Logger: logDB}
 		dialect = mysql.Open(dsn)
 	}
 
-	db, err = gorm.Open(dialect, gormConfig)
+	db, err = gorm.Open(dialect, &gorm.Config{PrepareStmt: true, Logger: logger.Default.LogMode(logger.Silent), SkipDefaultTransaction: true})
 	if err != nil {
 		return nil, err
 	}
