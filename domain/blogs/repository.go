@@ -2,6 +2,6 @@ package blogs
 
 // BlogRepository is
 type BlogRepository interface {
-	Fetch() ([]Blog, error)
+	Fetch() (Blogs, error)
 	Create(*Blog) error
 }
