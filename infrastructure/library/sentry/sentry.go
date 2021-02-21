@@ -17,22 +17,19 @@ func New(sc *config.SentryConfig) *Sentry {
 		return nil
 	}
 
-	err := sentry.Init(sentry.ClientOptions{
-		Dsn:         sc.DSN,
-		Environment: sc.ENV,
-	})
-	if err != nil {
+	if err := sentry.Init(sentry.ClientOptions{Dsn: sc.DSN, Environment: sc.ENV, Release: sc.Release}); err != nil {
 		return nil
 	}
+
 	return &Sentry{sc}
 }
 
-// CaptureError is
-func (s *Sentry) CaptureError(e error) *sentry.EventID {
+// Error is
+func (s *Sentry) Error(e error) *sentry.EventID {
 	return sentry.CaptureException(e)
 }
 
-// CaptureMessage is
-func (s *Sentry) CaptureMessage(msg string) *sentry.EventID {
+// Message is
+func (s *Sentry) Message(msg string) *sentry.EventID {
 	return sentry.CaptureMessage(msg)
 }
