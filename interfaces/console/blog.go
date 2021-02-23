@@ -5,7 +5,8 @@ import (
 	"go-service-gin/domain/blogs"
 	"go-service-gin/util/faker"
 	"go-service-gin/util/logger"
-	"go-service-gin/util/uuid"
+
+	"github.com/google/uuid"
 )
 
 // BlogConsole is
@@ -25,7 +26,7 @@ func NewBlogConsole(ba *application.BlogApplication) *BlogConsole {
 // Create is
 func (bh *BlogConsole) Create() bool {
 	b := &blogs.CreateBlog{
-		ID:    uuid.Generate(),
+		ID:    uuid.New().String(),
 		Title: faker.Sentence(),
 		Body:  faker.Paragraph(),
 	}
