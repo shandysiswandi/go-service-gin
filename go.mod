@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/bxcodec/faker/v3 v3.6.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/getsentry/sentry-go v0.10.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/gzip v0.0.3
