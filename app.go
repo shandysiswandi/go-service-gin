@@ -5,6 +5,7 @@ import (
 	"go-service-gin/config"
 	"go-service-gin/infrastructure/database"
 	"go-service-gin/infrastructure/database/sql"
+	"go-service-gin/infrastructure/external/jsonplaceholder"
 	"go-service-gin/infrastructure/library/redis"
 	"go-service-gin/infrastructure/library/sentry"
 	"go-service-gin/util/logger"
@@ -14,44 +15,42 @@ import (
 
 // all key app data
 const (
-	AppConfig = iota
-	Sentry    = iota
-	Redis     = iota
-	BlogLogic = iota
+	AppConfig       = iota
+	Sentry          = iota
+	Redis           = iota
+	JSONPlaceholder = iota
+	BlogLogic       = iota
 )
 
 // New is
 func New() map[int]interface{} {
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* load environment variable
+	/* load environment variable & define configuration
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	if err := godotenv.Load(); err != nil {
 		logger.Error(err)
 	}
 
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* define configuration
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	var (
-		appConfig    = config.NewAppConfig()
-		dbConfig     = config.NewDatabaseConfig()
-		redisConfig  = config.NewRedisConfig()
-		sentryConfig = config.NewSentryConfig()
+		appConfig      = config.NewAppConfig()
+		dbConfig       = config.NewDatabaseConfig()
+		redisConfig    = config.NewRedisConfig()
+		sentryConfig   = config.NewSentryConfig()
+		externalConfig = config.NewExternalConfig()
 	)
 
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* define database connection
+	/* define infrasuctures | database | library | external |
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	db, err := database.NewDatabase(dbConfig)
 	if err != nil {
 		logger.Error(err)
 	}
 
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
-	/* define library
-	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	redis := redis.New(redisConfig)
 	sentry := sentry.New(sentryConfig)
+
+	jph := jsonplaceholder.New(externalConfig.JSONPlaceholder)
 
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	/* define variable and inject to constructor
@@ -66,9 +65,10 @@ func New() map[int]interface{} {
 	/* return data
 	/********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 	return map[int]interface{}{
-		AppConfig: appConfig,
-		Sentry:    sentry,
-		Redis:     redis,
-		BlogLogic: blogLogic,
+		AppConfig:       appConfig,
+		Sentry:          sentry,
+		Redis:           redis,
+		JSONPlaceholder: jph,
+		BlogLogic:       blogLogic,
 	}
 }
